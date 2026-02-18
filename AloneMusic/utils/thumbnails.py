@@ -1,18 +1,18 @@
 # a part of Opus Music Project 2026 ©
-# this code is & will be our property as it is or even after modified 
-# must give credits to @x_ifeelram  if used this code anywhere ever 
+# this code is & will be our property as it is or even after modified
+# must give credits to @x_ifeelram  if used this code anywhere ever
 
 import os
-import re
 import random
-import aiohttp
-import aiofiles
+import re
 import traceback
 
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
+import aiofiles
+import aiohttp
+from PIL import (Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont)
 from py_yt import VideosSearch
-from config import YOUTUBE_IMG_URL
 
+from config import YOUTUBE_IMG_URL
 
 try:
     RESAMPLE = Image.Resampling.LANCZOS
@@ -41,15 +41,17 @@ def truncate(text, max_chars=50):
 
 
 def add_rounded_corners(im, radius):
-    circle = Image.new('L', (radius * 2, radius * 2), 0)
+    circle = Image.new("L", (radius * 2, radius * 2), 0)
     draw = ImageDraw.Draw(circle)
     draw.ellipse((0, 0, radius * 2, radius * 2), fill=255)
-    alpha = Image.new('L', im.size, 255)
+    alpha = Image.new("L", im.size, 255)
     w, h = im.size
     alpha.paste(circle.crop((0, 0, radius, radius)), (0, 0))
     alpha.paste(circle.crop((0, radius, radius, radius * 2)), (0, h - radius))
     alpha.paste(circle.crop((radius, 0, radius * 2, radius)), (w - radius, 0))
-    alpha.paste(circle.crop((radius, radius, radius * 2, radius * 2)), (w - radius, h - radius))
+    alpha.paste(
+        circle.crop((radius, radius, radius * 2, radius * 2)), (w - radius, h - radius)
+    )
     im.putalpha(alpha)
     return im
 
@@ -137,12 +139,18 @@ async def get_thumb(videoid):
         draw.text((565, 180), title_lines[0], (255, 255, 255), font=title_font1)
 
         if title_lines[1]:
-            title_font2 = fit_text(draw, title_lines[1], title_max_width, font_path, 36, 24)
+            title_font2 = fit_text(
+                draw, title_lines[1], title_max_width, font_path, 36, 24
+            )
             draw.text((565, 225), title_lines[1], (220, 220, 220), font=title_font2)
 
         draw.text((565, 305), f"{channel} | {views}", (240, 240, 240), font=font_info)
 
-        rand = (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
+        rand = (
+            random.randint(100, 255),
+            random.randint(100, 255),
+            random.randint(100, 255),
+        )
         draw.line([(565, 370), (990, 370)], fill=rand, width=6)
         draw.ellipse([(990, 362), (1010, 382)], outline=rand, fill=rand, width=12)
         draw.text((1080, 385), duration, (255, 255, 255), font=font_time)
@@ -155,7 +163,9 @@ async def get_thumb(videoid):
         glow_pos = [(x + dx, y + dy) for dx in (-1, 1) for dy in (-1, 1)]
         for pos in glow_pos:
             draw.text(pos, watermark_text, font=watermark_font, fill=(0, 0, 0, 180))
-        draw.text((x, y), watermark_text, font=watermark_font, fill=(255, 255, 255, 240))
+        draw.text(
+            (x, y), watermark_text, font=watermark_font, fill=(255, 255, 255, 240)
+        )
 
         background = add_rounded_corners(background, 30)
 
@@ -173,4 +183,3 @@ async def get_thumb(videoid):
         fallback = await _get_fallback_thumb_local()
 
         return fallback
-
